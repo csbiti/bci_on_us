@@ -1,0 +1,12 @@
+{
+  "general": {
+    "SMAILS_From": "dba@csb.nc",
+    "SMAILS_Client": "CSB",
+    "SMAILS_Service": "MAIL_TECHNIQUE",
+    "SMAILS_mdp": "iti",
+    "SMAILS_Serveur": "192.168.201.242",
+    "SMAILS_Dest": "a.fijalkowski@csb.nc",
+    "SMAILS_DestCC": "",
+    "SMAILS_DestBcc": ""
+  }
+}

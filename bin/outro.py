@@ -1,13 +1,25 @@
 def outro():
     return """
-    <p>Cordialement,</p>
-    <p>Service MRC Monétique et Relation Clientèle Calédonienne de Services Bancaires</p>
-    <p>BP 415 - 98845 NOUMEA Cedex Nouvelle-Calédonie</p>
-    <p></p>
-    <p>Contact refCSB</p>
-    <p></p>
-    <p>Tél: (+687) 46.32.63</p>
-    <p>Fax: (+687) 46.32.60</p>
-    <p></p>
-    <p>BackOffice Bancaire - Tous droits réservés CSB 2022.</p>
+    <style type="text/css">
+        div.outro {
+            float: left;
+            margin-top: 50px           
+        }
+    </style>
+
+    <div class="outro">
+        <p>Cordialement, <br>
+                Service MRC Monétique et Relation Clientele Calédonienne de Services Bancaires <br>
+                BP 415 - 98845 NOUMEA Cedex Nouvelle-Calédonie <br>
+        <br>
+        <br>
+        Contact <a href="mailto: mail@test.fr">CSB</a> <br>
+        <br>
+        <br>
+        Tél: (+687) 46.32.63 <br>
+        Fax: (+687) 46.32.60 <br>
+        <br>
+        <br>
+        BackOffice Bancaire - Tous droits réservés CSB 2022.</p>
+    </div>
     """

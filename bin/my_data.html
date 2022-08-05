@@ -1,5 +1,5 @@
 <style type="text/css">
-        .tg {
+        .first_table {
             border-collapse: collapse;
             border-spacing: 0;
             width: 70%;
@@ -7,7 +7,7 @@
             padding: 0px 0px 0xp 0xp;
         }
 
-        .tg td {
+        .first_table td {
             border-style: solid;
             border-width: 2px;
             font-family: Arial, sans-serif;
@@ -18,7 +18,7 @@
 
         }
 
-        .tg .title {
+        .first_table .title {
             text-align: center;
             vertical-align: middle;
             font-weight: bold;
@@ -26,70 +26,69 @@
             line-height: 1.5
         }
 
-        .tg .center {
+        .first_table .center {
             text-align: center;
 
         }
 
-        .tg .left {
+        .first_table .left {
             text-align: left;
 
         }
 
-        .tg .right {
+        .first_table .right {
             text-align: right;
         }
 
     </style>
 
+    <div>
+        <table class="first_table" style="undefined;table-layout: fixed; width: 80%">
+            <colgroup>
+                <col style="width: 50%">
+                <col style="width: 25%">
+                <col style="width: 10%">
+                <col style="width: 15%">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td class="center">Backoffice Bancaire</td>
+                    <td class="left">Processus : tiptop</td>
+                    <td class="right">Date :</span>
+                    </td>
+                    <td class="center">05/05/12</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title" rowspan="2">BCI<br>ECLATEMENT RETRAITS GAB EMV <br>05/05/12</td>
+                    <td class="left">Activité : toptip</td>
+                    <td class="right">Heure : </td>
+                    <td class="center">15:12</td>
+                </tr>
+                <tr>
+                    <td class="left" colspan="3"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+        <style type="text/css">  
 
-    <table class="tg" style="undefined;table-layout: fixed; width: 80%">
-        <colgroup>
-            <col style="width: 50%">
-            <col style="width: 25%">
-            <col style="width: 10%">
-            <col style="width: 15%">
-        </colgroup>
-        <tbody>
-            <tr>
-                <td class="center">Backoffice Bancaire</td>
-                <td class="left">Processus : tiptop</td>
-                <td class="right">Date :</span>
-                </td>
-                <td class="center">05/05/12</span>
-                </td>
-            </tr>
-            <tr>
-                <td class="title" rowspan="2">BCI<br>ECLATEMENT RETRAITS GAB EMV <br>05/05/12</td>
-                <td class="left">Activité : toptip</td>
-                <td class="right">Heure : </td>
-                <td class="center">15:12</td>
-            </tr>
-            <tr>
-                <td class="left" colspan="3"></td>
-            </tr>
-        </tbody>
-    </table>
-        <style type="text/css">
-
-        
-
-        
-
-        .first_table{
+        .second_table{
+            margin-top: 50px;
             border-collapse: collapse;
             border-spacing: 0;
+            float: left;
             width: 100%;
         }
 
         /* ROWS */
 
-        .first_table tr:nth-child(even) {
+        .second_table tr.even {
             background-color: #c6c5c5;
         }
 
         /* HEADERS */
-        .first_table th {
+        .second_table th {
             padding: 20px 10px;
             border-width: 0;
             font-family: Times;
@@ -99,13 +98,13 @@
             text-align: left;
         }
 
-        .first_table th.right {
+        .second_table th.right {
             text-align: right;
         }
 
         /* CELLS */
 
-        .first_table td {
+        .second_table td {
         border-width: 0;
         font-family: Times;
         font-size: 14px;
@@ -113,22 +112,21 @@
         padding: 20px 10px;
         }
 
-        .first_table td.right {
+        .second_table td.right {
             text-align: right;
         }
 
-        .first_table td.center {
+        .second_table td.center {
             text-align: center;
         }
 
-        .first_table td.left {
+        .second_table td.left {
             text-align: left;
         }
-
-
     </style>
 
-        <table class="first_table">
+    <div> 
+        <table class="second_table">
             <tbody>
                 <tr>
                     <th>Code Banque</th>
@@ -136,7 +134,7 @@
                     <th>Type Retrait </th>
                     <th class="right">Montant Total</th>
                 </tr>
-                <tr>
+                <tr class="even">
                     <td class="center">15888</td>
                     <td class="center">05/08/12</td>
                     <td class="left">retrait porteur bci</td>
@@ -148,7 +146,7 @@
                     <td class="left">Retraits porteurs francais hors bci</td>
                     <td class="right">20000</td>
                 </tr>
-                <tr>
+                <tr class="even">
                     <td class="center"></td>
                     <td class="center"></td>
                     <td class="left">Retraits porteurs étrangers</td>
@@ -156,15 +154,28 @@
                 </tr>
             </tbody>
         </table>
+    </div>
     
-    <p>Cordialement,</p>
-    <p>Service MRC Monétique et Relation Clientèle Calédonienne de Services Bancaires</p>
-    <p>BP 415 - 98845 NOUMEA Cedex Nouvelle-Calédonie</p>
-    <p></p>
-    <p>Contact refCSB</p>
-    <p></p>
-    <p>Tél: (+687) 46.32.63</p>
-    <p>Fax: (+687) 46.32.60</p>
-    <p></p>
-    <p>BackOffice Bancaire - Tous droits réservés CSB 2022.</p>
+    <style type="text/css">
+        div.outro {
+            float: left;
+            margin-top: 50px           
+        }
+    </style>
+
+    <div class="outro">
+        <p>Cordialement, <br>
+                Service MRC Monétique et Relation Clientele Calédonienne de Services Bancaires <br>
+                BP 415 - 98845 NOUMEA Cedex Nouvelle-Calédonie <br>
+        <br>
+        <br>
+        Contact <a href="mailto: mail@test.fr">CSB</a> <br>
+        <br>
+        <br>
+        Tél: (+687) 46.32.63 <br>
+        Fax: (+687) 46.32.60 <br>
+        <br>
+        <br>
+        BackOffice Bancaire - Tous droits réservés CSB 2022.</p>
+    </div>
     
