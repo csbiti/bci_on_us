@@ -30,3 +30,7 @@ PASSWORD_SMAILS le mdp au serveur SMAILS <br />
 ## Doc
 
 Pour plus de lisibilité, le projet garde dans des scripts séparés les modèles pour la construction du mail en html (first_table.py, second_table.py et outro.py dans l'ordre du html) et les requetes SQL pour récupérer les donnéees (request.py) le script principal étant mail_to_BCI
+
+## TODO 
+change the contact mail to the true one
+create a test config and a prod config
