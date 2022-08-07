@@ -9,9 +9,9 @@
     "SMAILS_mdp": "iti",
     "SMAILS_Serveur": "192.168.201.242",
 
-    "dsn": "192.168.202.17:1521/BOB", 
+    "dsn": "192.168.141.112:2328", 
     "db_password": "",
-    "db_port": 25
+    "db_port": ""
   },
 
   "prod": {

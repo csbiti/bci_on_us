@@ -39,12 +39,12 @@ import outro
 #---------------------#
 
 dirname = os.path.dirname(__file__)
-config_file = os.path.join(dirname, '../cfg/config.yml')
+config_file = os.path.join(dirname, '../cfg/conf.json')
 
 with open(config_file, 'r', encoding='utf-8') as file:
     config = json.load(file)
 
-
+config = config["local-test"]
 # Serveur sur python donc pas besoin de préciser le path
 cx_Oracle.init_oracle_client(lib_dir=r"C:/oracle/instantclient_21_6")
 
@@ -95,7 +95,7 @@ config = {
     # "path_eml": "/csb/tmp/last_mail_AC_SG.eml",
 
     # "dsn": "192.168.141.112:2328/BOB",
-    "dsn": "192.168.202.17:1521/BOB",  # env de dev
+    "dsn": "192.168.141.112:2328/BOB",  # env de dev
     "user": user,
     "password": password,
     "port": 25,
@@ -129,7 +129,22 @@ def request_to_bob(request, config):
                 # Recuperation des arretes comptables en attente de la validation par SG
                 curseur.execute(request)
                 print("executed")
-                return curseur.fetchall()
+
+                results = curseur.fetchall()
+                print(results)
+                print(len(results))
+                try:
+                    if results[0][0] == None:
+                        return 0
+                except:
+                    print("")
+                if len(results) == 0:
+                    return 0
+                elif len(results) == 1:
+                    return results[0][0]
+                else:
+                    print("Invalid request")
+                    exit(1)
 
     except cx_Oracle.Error as error:
         print("Erreur Oracle : %s", error)
@@ -192,11 +207,15 @@ if __name__ == "__main__":
     results = "test"
 
     result_sql_request_bci = request_to_bob(
-        requests.sql_request_bci, config)[0][0]
-    # request_to_bob(requests.sql_request_hors_bci, config)[0][0]
-    result_sql_request_hors_bci = 2
-    # request_to_bob(requests.sql_request_etranger, config)[0][0]
-    result_sql_request_etranger = 3
+        requests.sql_request_bci, config)
+
+    result_sql_request_hors_bci = request_to_bob(
+        requests.sql_request_hors_bci, config)
+    #result_sql_request_hors_bci = 2
+
+    result_sql_request_etranger = request_to_bob(
+        requests.sql_request_etranger, config)
+    #result_sql_request_etranger = 3
 
     results_requests = {"date": today, "heure": heure, "date_traitement": today, "processus": "Monétique", "activite": "Précompensation",
                         "bci": result_sql_request_bci, "hors_bci": result_sql_request_hors_bci, "etranger": result_sql_request_etranger, "code_banque": 17499}
@@ -207,6 +226,6 @@ if __name__ == "__main__":
 
     else:
         message = get_html_message(results_requests)
-        # send_mail('Rapport', message, config) #TODO uncomment
+        send_mail('Rapport', message, config)  # TODO uncomment
         print(" - Fin du script - \n ----- \n ")
         exit(0)

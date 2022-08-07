@@ -2,7 +2,7 @@ def outro():
     return """
     <style type="text/css">
         div.outro {
-            float: left;
+            clear: left;
             margin-top: 50px           
         }
     </style>
