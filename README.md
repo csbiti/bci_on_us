@@ -1,10 +1,10 @@
-# TITRE
+# mail_BCI_ON_US
 
-ticket: 78590 <br />
+ticket: 78590 (https://glpi.csb.nc/front/ticket.form.php?id=78590)<br />
 Git: https://github.com/csbiti/bci_on_us <br />
 version: 0.0.1 <br />
-SRV: None <br />
-DB: BOB12 (192.168.201.242)( <br />
+SRV: SMAILS <br />
+DB: BOB12 (192.168.201.242) <br />
 docker_img: None <br />
 github_actions: 0 <br />
 
@@ -19,14 +19,14 @@ Retraits porteurs étrangers <br />
 cx_Oracle installé sur le serveur https://oracle.github.io/python-cx_Oracle/
 
 ## Quick start
-Le script va avoir besoin de plusieurs arguments système
+Le script va avoir besoin de plusieurs arguments système <br />
 python mail_to_BCI_main.py TO=xxx@xx.xx CC=xxx@xx.xx,xxx@xx.xx USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=**** <br /> <br />
-Avec TO pour les adresses mail de récéptions sparés par une virgule <br />
+TO pour les adresses mail de récéptions sparés par une virgule <br />
 CC pour les adresses en copie (séparées par une virgule) <br />
 USER_DB l'identifiant à la BDD BOB12 <br />
 PASSWORD_DB le mdp à la BDD BOB12 <br />
-PASSWORD_SMAILS le mdp au serveur SMAILS <br />
+PASSWORD_SMAILS le mdp au serveur SMAILS <br /> 
 
 ## Doc
 
-Pour plus de lisibilité, le projet garde dans des scripts séparés les modèles pour la construction du mail en html (first_table.py, second_table.py et outro.py) et les requetes SQL pour récupérer les donnéees (request.py) le script principal étant mail_to_BCI
+Pour plus de lisibilité, le projet garde dans des scripts séparés les modèles pour la construction du mail en html (first_table.py, second_table.py et outro.py dans l'ordre du html) et les requetes SQL pour récupérer les donnéees (request.py) le script principal étant mail_to_BCI
