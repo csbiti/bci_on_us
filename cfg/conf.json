@@ -1,12 +1,31 @@
 {
-  "general": {
-    "SMAILS_From": "dba@csb.nc",
+  "local-test": {
+    
+    "path": "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bci_on_us",
+
+    "SMAILS_From": "MNP@csb.nc",
     "SMAILS_Client": "CSB",
     "SMAILS_Service": "MAIL_TECHNIQUE",
     "SMAILS_mdp": "iti",
     "SMAILS_Serveur": "192.168.201.242",
-    "SMAILS_Dest": "a.fijalkowski@csb.nc",
-    "SMAILS_DestCC": "",
-    "SMAILS_DestBcc": ""
+
+    "dsn": "192.168.202.17:1521/BOB", 
+    "db_password": "",
+    "db_port": 25
+  },
+
+  "prod": {
+    
+    "path": "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bci_on_us",
+
+    "SMAILS_From": "MNP@csb.nc",
+    "SMAILS_Client": "CSB",
+    "SMAILS_Service": "MAIL_TECHNIQUE",
+    "SMAILS_mdp": "iti",
+    "SMAILS_Serveur": "192.168.201.242",
+
+    "dsn": "192.168.202.17:1521/BOB", 
+    "db_password": "",
+    "db_port": 25
   }
 }

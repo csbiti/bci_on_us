@@ -6,6 +6,8 @@ def first_table(processus, activite, date, heure):
             width: 70%;
             float: right;
             padding: 0px 0px 0xp 0xp;
+            table-layout: fixed;
+            width: 80%
         }
 
         .first_table td {
@@ -44,7 +46,7 @@ def first_table(processus, activite, date, heure):
     </style>
 
     <div>
-        <table class="first_table" style="undefined;table-layout: fixed; width: 80%">
+        <table class="first_table">
             <colgroup>
                 <col style="width: 50%">
                 <col style="width: 25%">

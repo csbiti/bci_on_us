@@ -13,11 +13,13 @@ Prérequis:
 - le chemin "/csb/tmp/" doit exister
 """
 
+import datetime
 from email import generator
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
-from datetime import date
+import json
+
 from time import strftime
 
 import cx_Oracle
@@ -26,7 +28,8 @@ import subprocess
 import logging
 import os
 
-
+import requests
+import yaml
 import first_table
 import second_table
 import outro
@@ -34,6 +37,13 @@ import outro
 #---------------------#
 # CONFIGURATION #
 #---------------------#
+
+dirname = os.path.dirname(__file__)
+config_file = os.path.join(dirname, '../cfg/config.yml')
+
+with open(config_file, 'r', encoding='utf-8') as file:
+    config = json.load(file)
+
 
 # Serveur sur python donc pas besoin de préciser le path
 cx_Oracle.init_oracle_client(lib_dir=r"C:/oracle/instantclient_21_6")
@@ -45,6 +55,11 @@ nomScript = os.path.splitext(os.path.split(__file__)[1])[0]
 logging.basicConfig(filename=repScript+'/../log/envoi_mail_arretes_comptables.log',
                     format='%(asctime)s - %(levelname)s : %(message)s', level=logging.DEBUG)
 # never worked on the dev server so replace it by print
+
+## SQL REQUESTS ##
+
+today = datetime.datetime.now().strftime("%d/%m/%y")
+heure = datetime.datetime.now().strftime("%H:%M")
 
 
 # CONF MAIL #
@@ -62,6 +77,9 @@ for unArgv in sys.argv:
         password = unArgv.split('=')[1]
     elif unArgv.split('=')[0] == 'PASSWORD_SMAILS':
         password_smails = unArgv.split('=')[1]
+
+path_eml = config["path"] + "/tmp/mail_to_BCI.eml"
+path_tmp_html = config["path"] + "/tmp/mail_to_BCI.html"
 
 
 config = {
@@ -99,30 +117,17 @@ os.environ['ORACLE_HOME'] = '/csb/app/oracle/product/12.1.0/db_1/'
 # DEFINITIONS DES FONCTIONS
 #---------------------#
 
-def get_data_BCI(config):
+def request_to_bob(request, config):
     """
-    get the data to send to BCI
+    Recupère les données à envoyer à la BCI
     """
 
-    today = strftime("%d/%m/%y")
-
-    sql_request_1 = (  # Requete pour selectionner les AC en attente pour la SG
-        """
-        select sum(m.ch_mt_brut_centimes)  from tbob_retrait_mvt m
-        left join tbob_gab g on g.id = m.id_gab
-        left join tbob_porteur p on p.id = m.id_porteur
-        where m.dh_compens between to_date ('05/08/20 00:00:00', 'DD/MM/YY HH24:MI:SS') and to_date ('""" + today + """ 23:59:59', 'DD/MM/YY HH24:MI:SS')
-        and g.id_banque = '11'
-        and p.in_jade <> '1'
-        and p.id_banque = '11' """)
-
-    print(sql_request_1)
     try:
         with cx_Oracle.connect(config["user"], config["password"], config["dsn"]) as connexion:
             print("Connexion a la base de donnee BOB reussi")
             with connexion.cursor() as curseur:
                 # Recuperation des arretes comptables en attente de la validation par SG
-                curseur.execute(sql_request_1)
+                curseur.execute(request)
                 print("executed")
                 return curseur.fetchall()
 
@@ -132,19 +137,19 @@ def get_data_BCI(config):
         sys.exit(1)
 
 
-def get_html_message(list_AC):
+def get_html_message(params):
     """
     Formate les resultats de la recuperation des AC en attente
 
     Parameters
     -------
-    list_AC: liste des AC a formater,
+
     """
 
     first_table_var = first_table.first_table(
-        "tiptop", "toptip", "05/05/12", "15:12")
+        params["processus"], params["activite"], params["date"], params["heure"])
     second_table_var = second_table.second_table(
-        "15888", "05/08/12", "50000", "20000", "99999")
+        str(params["code_banque"]), params["date_traitement"], str(params["bci"]), str(params["hors_bci"]), str(params["etranger"]))
     outro_var = outro.outro()
 
     html_msg = first_table_var + second_table_var + outro_var
@@ -177,24 +182,31 @@ def send_mail(subject_mail, message_mail, config):
         config["SMAILS_Serveur"]+":8080/v1/smails/mailMessage/" + \
         config["SMAILS_Client"]+"/" + \
         config["SMAILS_Service"]+"/" + config["SMAILS_mdp"]
-    # print(cmd)
+
     retourCurl = subprocess.check_output(cmd, shell=True)
     retourCurl
 
 
 if __name__ == "__main__":
-    print(" - Debut du script - \n ")
+    print("\n - Debut du script - \n")
     results = "test"
-    print(get_data_BCI(config))
-    message = get_html_message(config)
-    print(message)
 
-    if not results:
-        print("Aucun AC en attente")
+    result_sql_request_bci = request_to_bob(
+        requests.sql_request_bci, config)[0][0]
+    # request_to_bob(requests.sql_request_hors_bci, config)[0][0]
+    result_sql_request_hors_bci = 2
+    # request_to_bob(requests.sql_request_etranger, config)[0][0]
+    result_sql_request_etranger = 3
+
+    results_requests = {"date": today, "heure": heure, "date_traitement": today, "processus": "Monétique", "activite": "Précompensation",
+                        "bci": result_sql_request_bci, "hors_bci": result_sql_request_hors_bci, "etranger": result_sql_request_etranger, "code_banque": 17499}
+
+    if results_requests["bci"] == 0 and results_requests["hors_bci"] == 0 and results_requests["etranger"] == 0:
+        print("Pas de rapport à envoyer")
+        exit(0)
+
     else:
-        results_size = len(results)
-        # message = get_data_BCI(results) TODO uncomment when data get right
-        # send_mail('Rapport', message, config)
-    print(" - Fin du script - \n ----- \n ")
-
-    exit(0)
+        message = get_html_message(results_requests)
+        # send_mail('Rapport', message, config) #TODO uncomment
+        print(" - Fin du script - \n ----- \n ")
+        exit(0)
