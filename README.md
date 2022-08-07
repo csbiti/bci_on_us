@@ -3,7 +3,7 @@
 ticket: 78590 (https://glpi.csb.nc/front/ticket.form.php?id=78590)<br />
 Git: https://github.com/csbiti/bci_on_us <br />
 version: 0.0.1 <br />
-SRV: SMAILS <br />
+SRV: SMAILS (192.168.201.242) <br />
 DB: BOB12 (192.168.201.242) <br />
 docker_img: None <br />
 github_actions: 0 <br />
