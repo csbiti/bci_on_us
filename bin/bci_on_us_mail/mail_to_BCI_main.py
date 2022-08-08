@@ -41,12 +41,8 @@ config_file = os.path.join(dirname, '../../cfg/bci_on_us_mail.json')
 with open(config_file, 'r', encoding='utf-8') as file:
     config = json.load(file)
 
-# Serveur sur python donc pas besoin de préciser le path
-cx_Oracle.init_oracle_client(lib_dir=r"C:/oracle/instantclient_21_6")
-
 repScript = os.path.abspath(os.path.split(__file__)[0])
 nomScript = os.path.splitext(os.path.split(__file__)[1])[0]
-
 
 today = datetime.datetime.now().strftime("%d/%m/%y")
 heure = datetime.datetime.now().strftime("%H:%M")
@@ -61,10 +57,9 @@ for unArgv in sys.argv:
     elif unArgv.split('=')[0] == 'PASSWORD_SMAILS':
         password_smails = unArgv.split('=')[1]
     elif unArgv.split('=')[0] == 'CONFIG':
+        # Choose the config setup here (local-test; SRV-test; SRV-prod)
         config_name = unArgv.split('=')[1]
 
-
-# Choose the config setup here (local-test; SRV-test; SRV-prod)
 config = config[config_name]
 
 # CONF MAIL #
@@ -76,9 +71,13 @@ FROM = "MNP@csb.nc"
 TO = to.split(",")
 CC = cc.split(",")
 
-connexion = None
+# Serveur sur python donc pas besoin de préciser le path
+if config["on_what"] == "local":
+    cx_Oracle.init_oracle_client(lib_dir=r"C:/oracle/instantclient_21_6")
+else:
+    os.environ['ORACLE_HOME'] = '/csb/app/oracle/product/12.1.0/db_1/'
 
-os.environ['ORACLE_HOME'] = '/csb/app/oracle/product/12.1.0/db_1/'
+connexion = None
 
 
 #---------------------#
@@ -118,11 +117,7 @@ def request_to_bob(request):
 
 def get_html_message(params):
     """
-    Formate les resultats de la recuperation des AC en attente
-
-    Parameters
-    -------
-
+    Creer un html à partir des modèles fournies dans les scripts (first_table.py, second_table.py et outro.py)
     """
     first_table_var = first_table.first_table(
         params["processus"], params["activite"], params["date"], params["heure"])
@@ -189,12 +184,13 @@ if __name__ == "__main__":
         and results_requests["hors_bci"] == 0
         and results_requests["etranger"] == 0
             and config["send_mail_anyway"] == "False"):
+
         print("Pas de rapport à envoyer")
         print(" - Fin du script - ")
 
     else:
         message = get_html_message(results_requests)
-        send_mail(subject, message)  # TODO uncomment
+        send_mail(subject, message)
         print(" - Fin du script - ")
 
     if config["delete_tmp_files"] == "True":

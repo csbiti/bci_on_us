@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import datetime
 today = datetime.datetime.now().strftime("%d/%m/%y")
 

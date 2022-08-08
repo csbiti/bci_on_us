@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 def second_table(code_banque, date_traitement, montant_BCI, montant_hors_BCI, montant_etrangers):
     return """
         <style type="text/css">  

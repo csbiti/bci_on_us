@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 def outro():
     return """
     <style type="text/css">

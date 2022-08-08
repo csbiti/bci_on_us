@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 def first_table(processus, activite, date, heure):
     return """<style type="text/css">
         .first_table {
