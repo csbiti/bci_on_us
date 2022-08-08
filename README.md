@@ -19,13 +19,13 @@ Retraits porteurs étrangers <br />
 cx_Oracle installé sur le serveur https://oracle.github.io/python-cx_Oracle/
 
 ## Quick start
-Le script va avoir besoin de plusieurs arguments système <br />
-python mail_to_BCI_main.py TO=xxx@xx.xx CC=xxx@xx.xx,xxx@xx.xx USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=**** <br /> <br />
-TO pour les adresses mail de récéptions sparés par une virgule <br />
-CC pour les adresses en copie (séparées par une virgule) <br />
-USER_DB l'identifiant à la BDD BOB12 <br />
-PASSWORD_DB le mdp à la BDD BOB12 <br />
-PASSWORD_SMAILS le mdp au serveur SMAILS <br /> 
+
+    python mail_to_BCI_main.py TO=xxx@xx.xx CC=xxx@xx.xx,xxx@xx.xx PASSWORD_DB=**** PASSWORD_SMAILS=**** <br /> <br />
+    
+**TO** pour les adresses mail de récéptions sparés par une virgule <br />
+**CC** pour les adresses en copie (séparées par une virgule) <br />
+**PASSWORD_DB** le mdp à la BDD BOB12 <br />
+**PASSWORD_SMAILS** le mdp au serveur SMAILS <br /> 
 
 ## Doc
 
