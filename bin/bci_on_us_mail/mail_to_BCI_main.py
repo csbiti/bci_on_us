@@ -1,35 +1,32 @@
 # -*- coding: UTF-8 -*-
 
+# Git: https://github.com/csbiti/bci_on_us
+
 """
-- Ticket 79638
-Script faisant suite a la demande de la societe generale pour avoir un envoi automatique de mail
-quotidien precisant si il y a des arretes comptables en attente de validation
-Commande pour lancer le script (pas de configuration supplémentaire)
+- Ticket 78590
+Envoi un rapport par mail quotidien à la BCI contenant:
+retrait porteur bci
+Retraits porteurs francais hors bci
+Retraits porteurs étrangers
+
 python "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bci_on_us/bin/mail.py" TO=colin.guetemme@live.fr CC=guetec@csb.nc,colin.guetemme@live.fr CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
 python /csb/bin/envoi_mail_arretes_comptables.py TO=pole-monetique@sgcb.nc CC=mnpexploitation@csb.nc CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
-
-
-Prérequis:
-- le chemin "/csb/tmp/" doit exister
 """
 
+import cx_Oracle
 import datetime
+import json
+import os
+import sys
+import subprocess
+
 from email import generator
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
-import json
 
-from time import strftime
-
-import cx_Oracle
-import sys
-import subprocess
-import logging
-import os
-
+# FILES #
 import requests
-import yaml
 import first_table
 import second_table
 import outro
@@ -39,74 +36,45 @@ import outro
 #---------------------#
 
 dirname = os.path.dirname(__file__)
-config_file = os.path.join(dirname, '../cfg/conf.json')
+config_file = os.path.join(dirname, '../../cfg/bci_on_us_mail.json')
 
 with open(config_file, 'r', encoding='utf-8') as file:
     config = json.load(file)
 
-config = config["local-test"]
 # Serveur sur python donc pas besoin de préciser le path
 cx_Oracle.init_oracle_client(lib_dir=r"C:/oracle/instantclient_21_6")
 
 repScript = os.path.abspath(os.path.split(__file__)[0])
 nomScript = os.path.splitext(os.path.split(__file__)[1])[0]
 
-## CONFIG LOG ##
-logging.basicConfig(filename=repScript+'/../log/envoi_mail_arretes_comptables.log',
-                    format='%(asctime)s - %(levelname)s : %(message)s', level=logging.DEBUG)
-# never worked on the dev server so replace it by print
-
-## SQL REQUESTS ##
 
 today = datetime.datetime.now().strftime("%d/%m/%y")
 heure = datetime.datetime.now().strftime("%H:%M")
 
-
-# CONF MAIL #
-
 for unArgv in sys.argv:
     if unArgv.split('=')[0] == 'TO':
-        receiver = unArgv.split('=')[1]
-    if unArgv.split('=')[0] == 'CC':
+        to = unArgv.split('=')[1]
+    elif unArgv.split('=')[0] == 'CC':
         cc = unArgv.split('=')[1]
-    elif unArgv.split('=')[0] == 'CODEBANQUE':
-        code_banque = unArgv.split('=')[1]
-    elif unArgv.split('=')[0] == 'USER_DB':
-        user = unArgv.split('=')[1]
     elif unArgv.split('=')[0] == 'PASSWORD_DB':
-        password = unArgv.split('=')[1]
+        password_db = unArgv.split('=')[1]
     elif unArgv.split('=')[0] == 'PASSWORD_SMAILS':
         password_smails = unArgv.split('=')[1]
+    elif unArgv.split('=')[0] == 'CONFIG':
+        config_name = unArgv.split('=')[1]
 
+
+# Choose the config setup here (local-test; SRV-test; SRV-prod)
+config = config[config_name]
+
+# CONF MAIL #
 path_eml = config["path"] + "/tmp/mail_to_BCI.eml"
 path_tmp_html = config["path"] + "/tmp/mail_to_BCI.html"
-
-
-config = {
-
-    "sender": "MNP@csb.nc",
-    "receiver": receiver.split(","),  # pole-monetique@sgcb.nc
-    "cc": cc.split(","),  # mnpexploitation@csb.nc
-    "code_banque": code_banque,  # 18319 correspond au code banque de la SG en NC
-
-
-    # TODO passer sur l'env de prod
-    "path_eml": "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bci_on_us/tmp/last_mail_AC_SG.eml",
-    # "path_eml": "/csb/tmp/last_mail_AC_SG.eml",
-
-    # "dsn": "192.168.141.112:2328/BOB",
-    "dsn": "192.168.141.112:2328/BOB",  # env de dev
-    "user": user,
-    "password": password,
-    "port": 25,
-
-    # "SMAILS_Serveur": "172.19.45.42",
-    "SMAILS_Serveur": "192.168.201.242",  # env de dev
-    "SMAILS_Client": "CSB",
-    "SMAILS_Service": "MAIL_TECHNIQUE",
-    "SMAILS_mdp": password_smails,
-}
-
+user = "bob"
+subject = "Rapport Eclatement Retrait GAB EMV"
+FROM = "MNP@csb.nc"
+TO = to.split(",")
+CC = cc.split(",")
 
 connexion = None
 
@@ -117,22 +85,18 @@ os.environ['ORACLE_HOME'] = '/csb/app/oracle/product/12.1.0/db_1/'
 # DEFINITIONS DES FONCTIONS
 #---------------------#
 
-def request_to_bob(request, config):
+def request_to_bob(request):
     """
     Recupère les données à envoyer à la BCI
     """
 
     try:
-        with cx_Oracle.connect(config["user"], config["password"], config["dsn"]) as connexion:
+        with cx_Oracle.connect(user, password_db, config["dsn"]) as connexion:
             print("Connexion a la base de donnee BOB reussi")
             with connexion.cursor() as curseur:
                 # Recuperation des arretes comptables en attente de la validation par SG
                 curseur.execute(request)
-                print("executed")
-
                 results = curseur.fetchall()
-                print(results)
-                print(len(results))
                 try:
                     if results[0][0] == None:
                         return 0
@@ -143,7 +107,7 @@ def request_to_bob(request, config):
                 elif len(results) == 1:
                     return results[0][0]
                 else:
-                    print("Invalid request")
+                    print("Invalid request, return more than one output")
                     exit(1)
 
     except cx_Oracle.Error as error:
@@ -160,7 +124,6 @@ def get_html_message(params):
     -------
 
     """
-
     first_table_var = first_table.first_table(
         params["processus"], params["activite"], params["date"], params["heure"])
     second_table_var = second_table.second_table(
@@ -168,64 +131,74 @@ def get_html_message(params):
     outro_var = outro.outro()
 
     html_msg = first_table_var + second_table_var + outro_var
-    with open("C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bci_on_us/bin/my_data.html", "w") as file:
+    with open(path_tmp_html, "w") as file:
         file.write(html_msg)
     message = MIMEText(html_msg, 'html')
     return message
 
 
-def send_mail(subject_mail, message_mail, config):
+def send_mail(subject_mail, message_mail):
     """
     Envoie un mail en passant par le serveur Smails
     Commence par créer un fichier au format eml (mail)
     Puis envoie une requete CURL a smails
     """
+    # MAIL CONFIGURATION
     mail = MIMEMultipart('alternative')
     mail['Subject'] = subject_mail
-    mail['From'] = config["sender"]
-    mail['To'] = ", ".join(config["receiver"])
-    mail['Cc'] = ", ".join(config["cc"])
+    mail['From'] = FROM
+    mail['To'] = ", ".join(TO)
+    mail['Cc'] = ", ".join(CC)
     mail['Date'] = formatdate(localtime=True)
     mail.attach(message_mail)
 
-    fichierEML = config["path_eml"]
+    # CREATE THE MAIL OBJECT
+    fichierEML = path_eml
     with open(fichierEML, 'w') as outfile:
         gen = generator.Generator(outfile)
         gen.flatten(mail)
 
+    # SEND THE MAIL
     cmd = "curl --request POST --data-binary \"@"+fichierEML+"\" -H \"Content-Type: application/json\"  http://" + \
         config["SMAILS_Serveur"]+":8080/v1/smails/mailMessage/" + \
         config["SMAILS_Client"]+"/" + \
-        config["SMAILS_Service"]+"/" + config["SMAILS_mdp"]
+        config["SMAILS_Service"]+"/" + password_smails
 
-    retourCurl = subprocess.check_output(cmd, shell=True)
-    retourCurl
+    subprocess.check_output(cmd, shell=True)
 
 
 if __name__ == "__main__":
     print("\n - Debut du script - \n")
-    results = "test"
 
+    # REQUESTS TO BOB12
     result_sql_request_bci = request_to_bob(
-        requests.sql_request_bci, config)
+        requests.sql_request_bci)
 
     result_sql_request_hors_bci = request_to_bob(
-        requests.sql_request_hors_bci, config)
-    #result_sql_request_hors_bci = 2
+        requests.sql_request_hors_bci)
 
     result_sql_request_etranger = request_to_bob(
-        requests.sql_request_etranger, config)
-    #result_sql_request_etranger = 3
+        requests.sql_request_etranger)
 
+    # FORMATING RESULTS
     results_requests = {"date": today, "heure": heure, "date_traitement": today, "processus": "Monétique", "activite": "Précompensation",
                         "bci": result_sql_request_bci, "hors_bci": result_sql_request_hors_bci, "etranger": result_sql_request_etranger, "code_banque": 17499}
 
-    if results_requests["bci"] == 0 and results_requests["hors_bci"] == 0 and results_requests["etranger"] == 0:
+    # SEND MAIL TO BCI
+    if (results_requests["bci"] == 0
+        and results_requests["hors_bci"] == 0
+        and results_requests["etranger"] == 0
+            and config["send_mail_anyway"] == "False"):
         print("Pas de rapport à envoyer")
-        exit(0)
+        print(" - Fin du script - ")
 
     else:
         message = get_html_message(results_requests)
-        send_mail('Rapport', message, config)  # TODO uncomment
-        print(" - Fin du script - \n ----- \n ")
-        exit(0)
+        send_mail(subject, message)  # TODO uncomment
+        print(" - Fin du script - ")
+
+    if config["delete_tmp_files"] == "True":
+        os.remove(path_eml)
+        os.remove(path_tmp_html)
+
+    exit(0)

@@ -8,6 +8,8 @@ def outro():
     </style>
 
     <div class="outro">
+        <p> &nbsp <br> </p>
+        <p> &nbsp <br> </p>
         <p>Cordialement, <br>
                 Service MRC Monétique et Relation Clientele Calédonienne de Services Bancaires <br>
                 BP 415 - 98845 NOUMEA Cedex Nouvelle-Calédonie <br>

@@ -66,20 +66,20 @@ def second_table(code_banque, date_traitement, montant_BCI, montant_hors_BCI, mo
                 <tr class="even">
                     <td class="center">""" + code_banque + """</td>
                     <td class="center">""" + date_traitement + """</td>
-                    <td class="left">retrait porteur bci</td>
-                    <td class="right">""" + montant_BCI + """</td>
+                    <td class="left">Retraits porteurs bci</td>
+                    <td class="right">""" + montant_BCI + """ XPF</td>
                 </tr>
                 <tr>
                     <td class="center"></td>
                     <td class="center"></td>
                     <td class="left">Retraits porteurs francais hors bci</td>
-                    <td class="right">""" + montant_hors_BCI + """</td>
+                    <td class="right">""" + montant_hors_BCI + """ XPF</td>
                 </tr>
                 <tr class="even">
                     <td class="center"></td>
                     <td class="center"></td>
                     <td class="left">Retraits porteurs étrangers</td>
-                    <td class="right">""" + montant_etrangers + """</td>
+                    <td class="right">""" + montant_etrangers + """ XPF</td>
                 </tr>
             </tbody>
         </table>
