@@ -10,7 +10,7 @@ Retraits porteurs francais hors bci
 Retraits porteurs étrangers
 
 python "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bci_on_us/bin/mail.py" TO=colin.guetemme@live.fr CC=guetec@csb.nc,colin.guetemme@live.fr CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
-python /csb/bin/envoi_mail_arretes_comptables.py TO=pole-monetique@sgcb.nc CC=mnpexploitation@csb.nc CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
+python /csb/bin/bci_on_us/mail/envoi_mail_arretes_comptables.py TO=pole-monetique@sgcb.nc CC=mnpexploitation@csb.nc CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
 """
 
 import cx_Oracle
@@ -79,10 +79,10 @@ else:
 
 connexion = None
 
-
 #---------------------#
 # DEFINITIONS DES FONCTIONS
 #---------------------#
+
 
 def request_to_bob(request):
     """
