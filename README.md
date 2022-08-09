@@ -24,7 +24,7 @@ cx_Oracle installé sur le serveur https://oracle.github.io/python-cx_Oracle/
 
     python mail_to_BCI_main.py TO=xxx@xx.xx CC=xxx@xx.xx,xxx@xx.xx PASSWORD_DB=**** PASSWORD_SMAILS=**** CONFIG=local-test
     
-**TO** pour les adresses mail de récéptions sparés par une virgule <br />
+**TO** pour les adresses mail de récéptions (séparées par une virgule) <br />
 **CC** pour les adresses en copie (séparées par une virgule) <br />
 **PASSWORD_DB** le mdp à la BDD BOB12 <br />
 **PASSWORD_SMAILS** le mdp au serveur SMAILS <br /> 
