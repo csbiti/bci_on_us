@@ -36,4 +36,5 @@ Pour plus de lisibilité, le projet garde dans des scripts séparés les modèle
 
 ## TODO 
 - change the contact mail to the true one <br /> 
+- add a log
 
