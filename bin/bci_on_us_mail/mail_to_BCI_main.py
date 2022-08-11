@@ -9,10 +9,11 @@ retrait porteur bci
 Retraits porteurs francais hors bci
 Retraits porteurs étrangers
 
-python "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bci_on_us/bin/mail.py" TO=colin.guetemme@live.fr CC=guetec@csb.nc,colin.guetemme@live.fr CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
-python /csb/bin/envoi_mail_arretes_comptables.py TO=pole-monetique@sgcb.nc CC=mnpexploitation@csb.nc CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
+python "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bin/mail.py" TO=colin.guetemme@live.fr CC=guetec@csb.nc,colin.guetemme@live.fr CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
+python "/csb/bin/mail_to_BCI_main.py" TO= CC= USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=**** config=SRV-prod
 """
 
+from time import strftime
 import cx_Oracle
 import datetime
 import json
@@ -66,7 +67,8 @@ config = config[config_name]
 path_eml = config["path"] + "/tmp/mail_to_BCI.eml"
 path_tmp_html = config["path"] + "/tmp/mail_to_BCI.html"
 user = "bob"
-subject = "Rapport Eclatement Retrait GAB EMV"
+subject = "BCI " + strftime("%Y%m%d") + \
+    " Information retraits GAB"
 FROM = "MNP@csb.nc"
 TO = to.split(",")
 CC = cc.split(",")

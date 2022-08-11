@@ -1,7 +1,7 @@
 {
   "local-test": {
     "on_what": "local",
-    "path": "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bci_on_us",
+    "path": "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US",
     
     "SMAILS_From": "guetec@csb.nc",
     "SMAILS_Client": "CSB",
@@ -30,6 +30,7 @@
   },
 
   "SRV-prod": {
+    "_comment": "mauvais SRV smails(ici adresse de dev) car pas accès à l'ip",
     "on_what": "SRV",
     "path": "/csb",
 

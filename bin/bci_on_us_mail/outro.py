@@ -16,7 +16,7 @@ def outro():
                 BP 415 - 98845 NOUMEA Cedex Nouvelle-Calédonie <br>
         <br>
         <br>
-        Contact <a href="mailto: mail@test.fr">CSB</a> <br>
+        Contact <a href="mailto: mrc@csb.nc">CSB</a> <br>
         <br>
         <br>
         Tél: (+687) 46.32.63 <br>
