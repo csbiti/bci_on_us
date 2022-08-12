@@ -3,9 +3,9 @@
 **ticket:** 78590 (https://glpi.csb.nc/front/ticket.form.php?id=78590)<br />
 **Git:** https://github.com/csbiti/bci_on_us <br />
 **version:** 0.0.1 <br />
-**is on:** SRVOEM41 () <br />
-**SRV:** SMAILS (192.168.201.242) <br />
-**DB:** BOB12 (192.168.201.242:2328/BOB) <br />
+**is on:** SRVOEM41 (ordonnancé par OPCON tous les jours à 7h30) <br />
+**SRV_call:** SMAILS (192.168.201.242) <br />
+**DB_call:** BOB12 (192.168.201.242:2328/BOB) <br />
 **docker_img:** None <br />
 **github_actions:** 0 <br />
 **testing:** None
