@@ -27,7 +27,7 @@ from email.mime.text import MIMEText
 from email.utils import formatdate
 
 # FILES #
-import requests
+import requests_bci
 import first_table
 import second_table
 import outro
@@ -36,17 +36,17 @@ import outro
 # CONFIGURATION #
 #---------------------#
 
-dirname = os.path.dirname(__file__)
-config_file = os.path.join(dirname, '../../cfg/bci_on_us_mail.json')
+DIRNAME = os.path.dirname(__file__)
+CONFIG_FILE = os.path.join(DIRNAME, '../../cfg/bci_on_us_mail.json')
 
-with open(config_file, 'r') as file:
-    config = json.load(file)
+with open(CONFIG_FILE, 'r') as file:
+    CONFIG = json.load(file)
 
-repScript = os.path.abspath(os.path.split(__file__)[0])
-nomScript = os.path.splitext(os.path.split(__file__)[1])[0]
+REPSCRIPT = os.path.abspath(os.path.split(__file__)[0])
+NOM_SCRIPT = os.path.splitext(os.path.split(__file__)[1])[0]
 
-today = datetime.datetime.now().strftime("%d/%m/%y")
-heure = datetime.datetime.now().strftime("%H:%M")
+TODAY = datetime.datetime.now().strftime("%d/%m/%y")
+HEURE = datetime.datetime.now().strftime("%H:%M")
 
 for unArgv in sys.argv:
     if unArgv.split('=')[0] == 'TO':
@@ -61,20 +61,20 @@ for unArgv in sys.argv:
         # Choose the config setup here (local-test; SRV-test; SRV-prod)
         config_name = unArgv.split('=')[1]
 
-config = config[config_name]
+CONFIG = CONFIG[config_name]
 
 # CONF MAIL #
-path_eml = config["path"] + "/tmp/mail_to_BCI.eml"
-path_tmp_html = config["path"] + "/tmp/mail_to_BCI.html"
-user = "bob"
-subject = "BCI " + strftime("%Y%m%d") + \
+PATH_EML = CONFIG["path"] + "/tmp/mail_to_BCI.eml"
+PATH_TMP_HTML = CONFIG["path"] + "/tmp/mail_to_BCI.html"
+USER = "bob"
+SUBJECT = "BCI " + strftime("%Y%m%d") + \
     " Information retraits GAB"
 FROM = "MNP@csb.nc"
 TO = to.split(",")
 CC = cc.split(",")
 
 # Serveur sur python donc pas besoin de préciser le path
-if config["on_what"] == "local":
+if CONFIG["on_what"] == "local":
     cx_Oracle.init_oracle_client(lib_dir=r"C:/oracle/instantclient_21_6")
 else:
     os.environ['ORACLE_HOME'] = '/csb/app/oracle/product/12.1.0/db_1/'
@@ -89,11 +89,11 @@ connexion = None
 def request_to_bob(request):
     """
     Recupère les données à envoyer à la BCI
+    les requetes se trouvent dans le fichier request_bci.py
     """
 
     try:
-        with cx_Oracle.connect(user, password_db, config["dsn"]) as connexion:
-            print("Connexion a la base de donnee BOB reussi")
+        with cx_Oracle.connect(USER, password_db, CONFIG["dsn"]) as connexion:
             with connexion.cursor() as curseur:
                 # Recuperation des arretes comptables en attente de la validation par SG
                 curseur.execute(request)
@@ -102,7 +102,7 @@ def request_to_bob(request):
                     if results[0][0] == None:
                         return 0
                 except:
-                    print("")
+                    True
                 if len(results) == 0:
                     return 0
                 elif len(results) == 1:
@@ -128,7 +128,7 @@ def get_html_message(params):
     outro_var = outro.outro()
 
     html_msg = first_table_var + second_table_var + outro_var
-    with open(path_tmp_html, "w") as file:
+    with open(PATH_TMP_HTML, "w") as file:
         file.write(html_msg)
     message = MIMEText(html_msg, 'html')
     return message
@@ -150,18 +150,32 @@ def send_mail(subject_mail, message_mail):
     mail.attach(message_mail)
 
     # CREATE THE MAIL OBJECT
-    fichierEML = path_eml
+    fichierEML = PATH_EML
     with open(fichierEML, 'w') as outfile:
         gen = generator.Generator(outfile)
         gen.flatten(mail)
 
     # SEND THE MAIL
     cmd = "curl --request POST --data-binary \"@"+fichierEML+"\" -H \"Content-Type: application/json\"  http://" + \
-        config["SMAILS_Serveur"]+":8080/v1/smails/mailMessage/" + \
-        config["SMAILS_Client"]+"/" + \
-        config["SMAILS_Service"]+"/" + password_smails
+        CONFIG["SMAILS_Serveur"]+":8080/v1/smails/mailMessage/" + \
+        CONFIG["SMAILS_Client"]+"/" + \
+        CONFIG["SMAILS_Service"]+"/" + password_smails
 
-    subprocess.check_output(cmd, shell=True)
+    retourCurl = subprocess.check_output(cmd, shell=True)
+
+    # FORMATE LE RETOUR CURL POUR CHARGER EN JSON
+    retourCurl = str(retourCurl)[2:]  # enlève les deux premiers char
+    retourCurl = retourCurl[:(len(retourCurl)-1)]  # enlève le dernier char
+    # enlève les backslash, pose pbs dans certaines erreurs, checker si marche ss linux
+    retourCurl = retourCurl.replace("\\", "")
+
+    # Le retour de la commande curl est au format JSON. Il convient d'en extraire le statut pour connaitre le code retour de la requete CURL.
+
+    retourJson = json.loads(str(retourCurl))
+
+    if "status" in retourJson:
+        print(str(retourJson))
+        sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -169,35 +183,36 @@ if __name__ == "__main__":
 
     # REQUESTS TO BOB12
     result_sql_request_bci = request_to_bob(
-        requests.sql_request_bci)
+        requests_bci.sql_request_bci)
 
     result_sql_request_hors_bci = request_to_bob(
-        requests.sql_request_hors_bci)
+        requests_bci.sql_request_hors_bci)
 
     result_sql_request_etranger = request_to_bob(
-        requests.sql_request_etranger)
+        requests_bci.sql_request_etranger)
+
+    print("Récupération des données sur BOB réussies \n\n")
 
     # FORMATING RESULTS
-    results_requests = {"date": today, "heure": heure, "date_traitement": today, "processus": "Monétique", "activite": "Précompensation",
+    results_requests = {"date": TODAY, "heure": HEURE, "date_traitement": TODAY, "processus": "Monétique", "activite": "Précompensation",
                         "bci": result_sql_request_bci, "hors_bci": result_sql_request_hors_bci, "etranger": result_sql_request_etranger, "code_banque": 17499}
 
     # SEND MAIL TO BCI
     if (results_requests["bci"] == 0
         and results_requests["hors_bci"] == 0
         and results_requests["etranger"] == 0
-            and config["send_mail_anyway"] == "False"):
-
+            and CONFIG["send_mail_anyway"] == "False"):
         print("Pas de rapport à envoyer")
 
     else:
         message = get_html_message(results_requests)
-        send_mail(subject, message)
+        send_mail(SUBJECT, message)
 
-    if config["delete_tmp_files"] == "True":
+    if CONFIG["delete_tmp_files"] == "True":
         try:
-            os.remove(path_eml)
+            os.remove(PATH_EML)
             print("tmp mail deleted")
-            os.remove(path_tmp_html)
+            os.remove(PATH_TMP_HTML)
             print("tmp html deleted")
         except:
             print("no mail to delete")

@@ -18,23 +18,27 @@ Retraits porteurs francais hors bci <br />
 Retraits porteurs étrangers <br />
 
 ## Requirements
+
 cx_Oracle installé sur le serveur https://oracle.github.io/python-cx_Oracle/
 
 ## Quick start
 
     python mail_to_BCI_main.py TO=xxx@xx.xx CC=xxx@xx.xx,xxx@xx.xx PASSWORD_DB=**** PASSWORD_SMAILS=**** CONFIG=local-test
-    
+
 **TO** pour les adresses mail de récéptions (séparées par une virgule) <br />
 **CC** pour les adresses en copie (séparées par une virgule) <br />
 **PASSWORD_DB** le mdp à la BDD BOB12 <br />
-**PASSWORD_SMAILS** le mdp au serveur SMAILS <br /> 
-**CONFIG** le type de configuration, trois options (local-test, SRV-test, SRV-prod) <br /> 
+**PASSWORD_SMAILS** le mdp au serveur SMAILS <br />
+**CONFIG** le type de configuration, trois options (local-test, SRV-test, SRV-prod) <br />
 
 ## Doc
 
 Pour plus de lisibilité, le projet garde dans des scripts séparés les modèles pour la construction du mail en html (first_table.py, second_table.py et outro.py dans l'ordre du html) et les requetes SQL pour récupérer les donnéees (request.py) le script principal étant mail_to_BCI
 
-## TODO 
-- change the contact mail to the true one <br /> 
-- add a log
+Le fichier congif propose 3 configs différentes:
 
+- local-test: le PATH est en local (à changer selon utilisateur) et utilise le SRV BOB et SMAILS de test
+- SRV-test: le PATH est en SRV (à changer selon utilisateur) et utilise le SRV BOB et SMAILS de test
+- SRV-prod: le PATH est en SRV (à changer selon utilisateur) et utilise le SRV BOB et SMAILS de prod (TODO for SMAILS)
+
+## TODO

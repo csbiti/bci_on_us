@@ -56,7 +56,7 @@ def first_table(processus, activite, date, heure):
             </colgroup>
             <tbody>
                 <tr>
-                    <td class="center">Backoffice Bancaire</td>
+                    <td class="center">BackOffice Bancaire</td>
                     <td class="left">Processus : """ + processus + """</td>
                     <td class="right">Date :</span>
                     </td>

@@ -12,11 +12,11 @@ def outro():
         <p> &nbsp <br> </p>
         <p> &nbsp <br> </p>
         <p>Cordialement, <br>
-                Service MRC Monétique et Relation Clientele Calédonienne de Services Bancaires <br>
+                Service MNP Monétique et Nouveaux Paiements Calédonienne de Services Bancaires <br>
                 BP 415 - 98845 NOUMEA Cedex Nouvelle-Calédonie <br>
         <br>
         <br>
-        Contact <a href="mailto: mrc@csb.nc">CSB</a> <br>
+        Contact <a href="mailto: MNP@csb.nc">CSB</a> <br>
         <br>
         <br>
         Tél: (+687) 46.32.63 <br>
