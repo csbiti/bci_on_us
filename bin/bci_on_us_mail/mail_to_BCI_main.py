@@ -9,11 +9,12 @@ retrait porteur bci
 Retraits porteurs francais hors bci
 Retraits porteurs étrangers
 
-python "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bin/mail.py" TO=colin.guetemme@live.fr CC=guetec@csb.nc,colin.guetemme@live.fr CODEBANQUE=18319 USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=****
+python "C:/Users/guetec/OneDrive - CSB/Documents/projets/BCI_ON_US/bin/mail.py" TO=colin.guetemme@live.fr CC=guetec@csb.nc,colin.guetemme@live.fr USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=**** CONFIG=local-test
 python "/csb/bin/mail_to_BCI_main.py" TO= CC= USER_DB=bob PASSWORD_DB=**** PASSWORD_SMAILS=**** config=SRV-prod
 """
 
 from time import strftime
+from unittest import result
 import cx_Oracle
 import datetime
 import json
@@ -98,15 +99,23 @@ def request_to_bob(request):
                 # Recuperation des arretes comptables en attente de la validation par SG
                 curseur.execute(request)
                 results = curseur.fetchall()
+                print(results)
+
                 try:
                     if results[0][0] == None:
                         return 0
                 except:
                     True
+
                 if len(results) == 0:
                     return 0
                 elif len(results) == 1:
-                    return results[0][0]
+                    results = results[0][0]
+                    results = str(results)[::-1]
+                    results = ' '.join([results[i:i+3]
+                                       for i in range(0, len(results), 3)])
+                    results = results[::-1]
+                    return results
                 else:
                     print("Invalid request, return more than one output")
                     exit(1)
@@ -176,6 +185,12 @@ def send_mail(subject_mail, message_mail):
     if "status" in retourJson:
         print(str(retourJson))
         sys.exit(1)
+    else:
+        to_unpacked = TO
+        print("\n\nMail envoyé à:")
+        print(*TO)
+        print("En copie à:")
+        print(*CC)
 
 
 if __name__ == "__main__":
@@ -197,12 +212,22 @@ if __name__ == "__main__":
     results_requests = {"date": TODAY, "heure": HEURE, "date_traitement": TODAY, "processus": "Monétique", "activite": "Précompensation",
                         "bci": result_sql_request_bci, "hors_bci": result_sql_request_hors_bci, "etranger": result_sql_request_etranger, "code_banque": 17499}
 
+    print("Requête BCI:" + str(results_requests["bci"]))
+    print("Requête hors-BCI:" +
+          str(results_requests["hors_bci"]))
+    print("Requête étranger:" +
+          str(results_requests["etranger"]))
+    print("date:" + results_requests["date"])
+    print("heure:" + results_requests["heure"] + "\n \n")
+
     # SEND MAIL TO BCI
     if (results_requests["bci"] == 0
         and results_requests["hors_bci"] == 0
         and results_requests["etranger"] == 0
             and CONFIG["send_mail_anyway"] == "False"):
         print("Pas de rapport à envoyer")
+        print("Vérifier que le reste de la chaine a bien tourné")
+        sys.exit(1)
 
     else:
         message = get_html_message(results_requests)

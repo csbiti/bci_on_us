@@ -3,12 +3,13 @@ def second_table(code_banque, date_traitement, montant_BCI, montant_hors_BCI, mo
     return """
         <style type="text/css">  
 
-        .second_table{
-            margin-top: 50px;
+        .second_table {
+            margin: 5px;
             border-collapse: collapse;
             border-spacing: 0;
             float: left;
-            width: 100%;
+            width: 80%;
+            height: 2em;
         }
 
         /* ROWS */

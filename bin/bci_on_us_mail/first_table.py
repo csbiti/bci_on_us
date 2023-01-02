@@ -4,11 +4,10 @@ def first_table(processus, activite, date, heure):
         .first_table {
             border-collapse: collapse;
             border-spacing: 0;
-            width: 70%;
             float: right;
-            padding: 0px 0px 0xp 0xp;
-            table-layout: fixed;
-            width: 80%
+            margin: 10xp;
+            
+            width: 65%;
         }
 
         .first_table td {
